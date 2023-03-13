@@ -33,9 +33,9 @@ def predict_YOLOv7_proces():
 
     face_base64 = request.values.get('facebase64')
     path_image = save_image(face_base64)
-    subprocess.Popen(["F:\PBL5\YOLOv7_train\yolov7\.venv\Scripts\python", 'detect.py','--weights','runs/train/exp4/weights/last.pt', '--source',path_image ])
-     
-    return "test"
+    process = subprocess.Popen([os.getcwd() + "\.venv\Scripts\python", 'detect.py','--weights','runs/train/exp4/weights/last.pt', '--source',path_image ])
+    process.wait()
+    return os.getcwd()
    
 
 
