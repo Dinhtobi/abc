@@ -1,12 +1,12 @@
 # Repo-specific GitIgnore ----------------------------------------------------------------------------------------------
-#*.jpg
+*.jpg
 *.jpeg
 *.png
 *.bmp
 *.tif
 *.tiff
 *.heic
-#*.JPG
+*.JPG
 *.JPEG
 *.PNG
 *.BMP
@@ -25,15 +25,15 @@
 
 storage.googleapis.com
 runs/*
-data/*
-data/images/*
-!data/*.yaml
-!data/hyps
-!data/scripts
-!data/images
-#!data/images/zidane.jpg
-#!data/images/bus.jpg
-!data/*.sh
+# data/*
+# data/images/*
+# !data/*.yaml
+# !data/hyps
+# !data/scripts
+# !data/images
+# !data/images/zidane.jpg
+# !data/images/bus.jpg
+# !data/*.sh
 
 results*.csv
 
@@ -143,7 +143,7 @@ docs/_build/
 target/
 
 # Jupyter Notebook
-#.ipynb_checkpoints
+.ipynb_checkpoints
 
 # pyenv
 .python-version
