@@ -2,35 +2,30 @@ from flask import Flask ,render_template
 from flask import request
 from flask_cors import CORS , cross_origin 
 import os
-import subprocess
-from subprocess import Popen
 import glob
-import io
-import base64
-from io import BytesIO
-from PIL import Image
+import myYolov7
+import train_main
+import test
+from webmodel.models import db
+from webroute.route import route_bp
+from flask_migrate import Migrate
+from flask import Blueprint
+
 #Khởi tạo Flask Server Backend
 app = Flask(__name__)
-
+app.config.from_object('config')
 #Apply Flask CORS
 CORS(app)
 app.config['CORS_HEADERS']  ='Content-Type'
 app.config['UPLOAD_FOLDER'] = "static"
+db.init_app(app)
 
-def save_image(image):
-    folder_path = "test_image"
-    image_count = len(glob.glob(folder_path + "/*.jpg"))
-    path_video = folder_path + "/anh{}".format(image_count+1)+".jpg"
-    image.save(path_video)
-    return path_video
+migrate = Migrate(app, db)
+#model = myYolov7.my_yolov7('last.pt','cpu',0.6)
+#route_bp = Blueprint('route_bp', __name__)
+app.register_blueprint(route_bp, url_prefix='/')
 
-def save_video(video):
-    
-    folder_path = "test_image"
-    video_count = len(glob.glob(folder_path + "/*.mp4"))
-    path_video = folder_path + "/video{}".format(video_count+1)+".mp4"
-    video.save(path_video)
-    return path_video
+
 
 @app.route('/' , methods= ['POST' , 'GET'])
 @cross_origin(origins='*')
@@ -39,23 +34,27 @@ def trangchu():
     return render_template('index.html')
 
 
-@app.route('/predict' , methods= ['POST'])
+@app.route('/train' , methods= ['POST'])
 @cross_origin(origins='*')
 
-def predict_video_YOLOv7_proces():
-
+def TrainImage():
+    folderTrain = 'test_image/'
     file = request.files['file']
-    duoi = file.filename.split(".")[1]
-    if duoi == "mp4":
-       path_file =  save_video(file)
-    elif duoi == "jpg":
-       path_file =  save_image(file)
-    process = subprocess.Popen([os.getcwd() + "\.venv\Scripts\python", 'detect.py','--weights','last.pt', '--source',path_file ])
-    process.wait()
-    return "success"
-
-
+    pathfolder = file.filename.split('/')[0]
+    if os.path.exists( folderTrain + '/' + pathfolder):
+        os.rmdir( folderTrain + '/' + pathfolder)
+    os.mkdir( folderTrain + '/' + pathfolder)
+    count =0 
+    for file in request.files.getlist('file'):
+        savepath = folderTrain+ file.filename
+        count +=1
+        #imgs =  folderTrain+'/' + pathfolder +'/' + pathfile  
+        print(savepath, savepath , count)
+        #model.detect(savepath,savepath,count)
+    train_main.Train()
+    return 'Upload completed'
 #Start Backend
 if __name__ == '__main__':
-    app.run(host='0.0.0.0' , port = '6868',use_reloader=True)
+    app.run(host='0.0.0.0' , port = '6868'#,use_reloader=True
+            )
     

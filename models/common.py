@@ -932,7 +932,7 @@ class autoShape(nn.Module):
             return Detections(imgs, y, files, t, self.names, x.shape)
 
 
-class Detections:
+class Detections: 
     # detections class for YOLOv5 inference results
     def __init__(self, imgs, pred, files, times=None, names=None, shape=None):
         super(Detections, self).__init__()
