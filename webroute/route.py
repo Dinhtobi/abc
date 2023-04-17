@@ -1,5 +1,5 @@
 from flask import Blueprint
-from flask import render_template , redirect , url_for , request , abort, jsonify
+from flask import render_template , redirect , url_for , request , abort, jsonify ,send_from_directory
 import myYolov7
 import os
 from webcontroller.Controller import *
@@ -51,13 +51,46 @@ def save_image(image):
 #@cross_origin(origins='*')
 
 def predict_image_YOLOv7_proces():
+    try:
+        file = request.files['file']
+        if file :
+            path_file =  save_image(file)
+            imgs = path_file 
+            listfile = os.listdir('test_image')
+            count = len(listfile)
+            savepath = 'output_img/image.jpg'
+            result,img1,bounding_box =  model.detect(imgs,savepath,count)
+            Namepeople ,savepath = models.regconie(path_file,bounding_box, img1)
+            if Namepeople :
+                os.remove(path_file)
+                saveSession(Namepeople,savepath)
+                return "True"
+            else :
+                return "False"
 
-    file = request.files['file']
-    path_file =  save_image(file)
-    imgs = path_file 
-    listfile = os.listdir('test_image')
-    count = len(listfile)
-    savepath = 'output_img/image.jpg'
-    result,bounding_box =  model.detect(imgs,savepath,count)
-    models.regconie(path_file,bounding_box)
-    return "success"
+    except Exception as e:
+        print(e)
+        return e 
+        
+@route_bp.route('/getimage' , methods= ['GET'])
+#@cross_origin(origins='*')
+
+def get_image():
+    try:
+        id_face = request.form['id_face']
+        if id_face :
+            face = getimagebyface(id_face)
+            if face :
+                return face
+            else :
+                return "False"
+
+    except Exception as e:
+        print(e)
+        return e 
+    
+@route_bp.route('/files/output_img/<filename>')
+def download_file(filename):
+    image_folder = os.path.join(os.getcwd(), 'output_img')
+    print(image_folder, filename)
+    return send_from_directory(directory=image_folder, path=filename, as_attachment=True)

@@ -10,7 +10,10 @@ import time
 import pickle
 import imageio.v2 as imageio
 from PIL import Image
+from numpy import random
+import datetime
 import tensorflow.compat.v1 as tf
+from utils.plots import plot_one_box
 class face_regconie():
     def __init__(self):
         self.video= 0
@@ -39,7 +42,7 @@ class face_regconie():
                     (self.model, self.class_names) = pickle.load(infile,encoding='latin1')
                 
                 video_capture = cv2.VideoCapture(self.video)
-    def regconie(self,path_img , boundingbox):
+    def regconie(self,path_img , boundingbox , img1):
             
         
                 print('Start Recognition')
@@ -47,21 +50,24 @@ class face_regconie():
                 # ret, frame = video_capture.read()
                 frame=imageio.imread(path_img)
                 
+                colors = [random.randint(0, 255) for _ in range(3)]
                 #frame = cv2.resize(frame, (0,0), fx=0.5, fy=0.5)    #resize frame (optional)
                 timer =time.time()
                 if frame.ndim == 2:
                     frame = facenet.to_rgb(frame)
                     
-                savepath = 'output_img/image.jpg'
+                savepath = 'output_img/.jpg'
                 imgsource = path_img
                 bounding_boxes = boundingbox
                 faceNum = bounding_boxes.shape[0]
+                
                 if faceNum > 0:
                     det = bounding_boxes[:, 0:4]
                     img_size = np.asarray(frame.shape)[0:2]
                     cropped = []
                     scaled = []
                     scaled_reshape = []
+                    pep = []
                     for i in range(faceNum):
                         emb_array = np.zeros((1, self.embedding_size))
                         xmin = int(det[i][0])
@@ -91,12 +97,16 @@ class face_regconie():
                                 for H_i in self.HumanNames:
                                     if self.HumanNames[best_class_indices[0]] == H_i:
                                         result_names = self.HumanNames[best_class_indices[0]]
+                                        
+                                        plot_one_box([xmin, ymin, xmax, ymax], img1, label= self.HumanNames[best_class_indices[0]], color=colors[int(2)], line_thickness=1)
+                                        img1 = np.asarray(img1)
+                                        pep.append(self.HumanNames[best_class_indices[0]])
                                         print("Predictions : [ name: {} , accuracy: {:.3f} ]".format(self.HumanNames[best_class_indices[0]],best_class_probabilities[0]))
                                         cv2.rectangle(frame, (xmin, ymin-20), (xmax, ymin-2), (0, 255,255), -1)
                                         cv2.putText(frame, result_names, (xmin,ymin-5), cv2.FONT_HERSHEY_COMPLEX_SMALL,
                                                     1, (0, 0, 0), thickness=1, lineType=1)
                                 
-                                        
+                                            
                             else :
                                 cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), (0, 255, 0), 2)
                                 cv2.rectangle(frame, (xmin, ymin-20), (xmax, ymin-2), (0, 255,255), -1)
@@ -105,5 +115,12 @@ class face_regconie():
                         except:   
                             
                             print("error")
-                            
-            
+                    #cv2.imwrite(savepath, img1)
+                    nameimage = ''
+                    now = datetime.datetime.now()
+                    formatted_time = now.strftime("%Y-%m-%d")
+                    for i in pep:
+                        nameimage += i
+                    print(nameimage)
+                    cv2.imwrite(savepath.split('.jpg')[0]+'_{}_{}.jpg'.format(nameimage,formatted_time), img1)
+                    return pep ,savepath            

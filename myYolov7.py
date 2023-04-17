@@ -19,7 +19,7 @@ class my_yolov7():
         self.stride = int(self.model.stride.max())  # model stride
         self.imgsz = check_img_size(img_size, s=self.stride)  # check img_size # check image size
         
-    def detect(self, source,savepath,count):
+    def detect(self, source,savepath,count,type="nosave"):
         self.source = source
         dataset = LoadImages(source, img_size=self.imgsz, stride=self.stride)
         names = self.model.module.names if hasattr(self.model, 'module') else self.model.names
@@ -31,54 +31,27 @@ class my_yolov7():
             img /= 255.0  # 0 - 255 to 0.0 - 1.0
             if img.ndimension() == 3:
                 img = img.unsqueeze(0)
-
-            # # Warmup
-            # if self.device.type != 'cpu' and (old_img_b != img.shape[0] or old_img_h != img.shape[2] or old_img_w != img.shape[3]):
-            #     old_img_b = img.shape[0]
-            #     old_img_h = img.shape[2]
-            #     old_img_w = img.shape[3]
-            #     for i in range(3):
-            #         self.model(img, augment=opt.augment)[0]
-
             # Inference
             pred = self.model(img, augment=False)[0]
-
-
             # Apply NMS
             pred = non_max_suppression(pred,self.conf_thres, 0.45, classes=None, agnostic=False)
- 
             # Process detections
             for i, det in enumerate(pred):  # detections per image
                 
                 p, s, im0, frame = path, '', im0s, getattr(dataset, 'frame', 0)
-
-                # p = Path(p)  # to Path
-                # save_path = str(save_dir / p.name)  # img.jpg
-                # txt_path = str(save_dir / 'labels' / p.stem) + ('' if dataset.mode == 'image' else f'_{frame}')  # img.txt
-             
-                #gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
+                img1 = im0.copy()
                 if len(det):
-                    # Rescale boxes from img_size to im0 size
                     det[:, :4] = scale_coords(img.shape[2:], det[:, :4], im0.shape).round()
 
-                    # Print results
-                    # for c in det[:, -1].unique():
-                    #     n = (det[:, -1] == c).sum()  # detections per class
-                    #     s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "  # add to string
                     index = 0
-                    # Write results
                     for *xyxy, conf, cls in reversed(det):
                         
-                        #xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
-                        #line = (cls, *xywh, conf) if False else (cls, *xywh)  # label format
-                        # with open(txt_path + '.txt', 'a') as f:
-                        #     f.write(('%g ' * len(line)).rstrip() % line + '\n')
                         index+=1
                         label = f'{names[int(cls)]} {conf:.2f}'
                         crop_img = im0[int(xyxy[1]):int(xyxy[3]), int(xyxy[0]):int(xyxy[2])]
-                        #print(int(xyxy[1]),int(xyxy[3]),int( xyxy[0]),int(xyxy[2]))
-                        cv2.imwrite(savepath.split('.jpg')[0]+'_{}_{}.jpg'.format(count,index), crop_img)
+                        if type == "save":
+                            cv2.imwrite(savepath.split('.jpg')[0]+'_{}_{}.jpg'.format(count,index), crop_img)
             
                         plot_one_box(xyxy, im0, label=label, color=colors[int(cls)], line_thickness=1)
                     im0 = np.asarray(im0)
-                return im0 ,det
+                return im0,img1 ,det
