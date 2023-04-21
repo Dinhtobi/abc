@@ -38,13 +38,17 @@ class Department(db.Model):
     id_department = db.Column(db.Integer, primary_key = True)
     Name = db.Column(db.String(100))
     Decription = db.Column(db.String(100))
+    users = db.relationship('Users', backref='department', lazy=True)
+
     def get_id(self):
-        return(self.id_department)
+        return self.id_department
+
     def serialize(self):
-        return{
-            'id_department': self.id_department,
-            'Name' : self.Name,
-            'Decription': self.Decription,
+        return {
+            "id_department": self.id_department,
+            "name": self.Name,
+            "decription": self.Decription,
+            "num_users": len(self.users)
         }
 
 

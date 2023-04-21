@@ -8,7 +8,7 @@ department_controller = Blueprint('department_controller', __name__, url_prefix=
 def get_departments():
     departments = Department.query.all()
     department_list = [department.serialize() for department in departments]
-    return jsonify(department=department_list)
+    return jsonify(department_list)
 
 @department_controller.route('/<int:id_department>', methods=['GET'])
 def get_department(id_department):
