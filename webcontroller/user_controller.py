@@ -73,7 +73,7 @@ def user_login():
     try:
         user = Users.query.filter_by(Email = email).filter_by(Password = password).first()
         if user:
-            return user
+            return jsonify(user.serialize())
         else: return  "null"
     except Exception as e:
         print(str(e))

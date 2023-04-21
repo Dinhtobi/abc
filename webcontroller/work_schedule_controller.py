@@ -38,7 +38,7 @@ def getallSessionbyPageandiddepartment():
                 serialized_employstatus = serialize_work_schedule(i.work_date ,serialized_list_employstatus )
                 serialized_list_work_schedule.append(serialized_employstatus)
             data = {"listwork_schedules": serialized_list_work_schedule}
-            return jsonify(data)
+            return jsonify(list(serialized_list_work_schedule))
         else :
             return 'null'
     # except Exception as e:
