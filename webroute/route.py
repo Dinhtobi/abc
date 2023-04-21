@@ -9,37 +9,6 @@ models = test.face_regconie()
 model = myYolov7.my_yolov7('last.pt','cpu',0.6)
 route_bp = Blueprint('route_bp', __name__)
 
-@route_bp.route('/login', methods = ['POST'])
-def user_login():
-    email = request.form['email']
-    password = request.form['password']
-    return User_Login(email, password)
-
-@route_bp.route('/resetpass', methods = ['POST'])
-def user_rspassword():
-    email = request.form['email']
-    password = request.form['password']
-    id_user = request.form['id_user']
-    return User_ResetPass(id_user,email, password)
-
-@route_bp.route('/departmentgetall', methods = ['GET'])
-def department_getall():
-    try:
-        department = department_getall()
-        return department
-    except Exception as e:
-            print(str(e))
-            return "Error3"
-    
-@route_bp.route('/getbyid_department', methods = ['POST'])
-def detaildepartment_getbyid_department():
-    try:
-        id_department = request.form['id_department']
-        department = detaildepartment_getbyid_department(id_department)
-        return department
-    except Exception as e:
-            print(str(e))
-            return "Error3"
 
 def save_image(image):
     folder_path = "test_image"
@@ -89,8 +58,3 @@ def get_image():
         print(e)
         return e 
     
-@route_bp.route('/files/output_img/<filename>')
-def download_file(filename):
-    image_folder = os.path.join(os.getcwd(), 'output_img')
-    print(image_folder, filename)
-    return send_from_directory(directory=image_folder, path=filename, as_attachment=True)

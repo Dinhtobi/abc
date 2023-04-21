@@ -1,56 +1,8 @@
 from flask import render_template , redirect , url_for , request , abort, jsonify
 from webmodel.models import *
 from datetime import datetime
-def User_Login(email , password):
-    try:
-        user = Users.query.filter_by(Email = email).filter_by(Password = password).first()
-        if user:
-            check = "TRUE"
-        else: check = "False"
-        return check
-    except Exception as e:
-        print(str(e))
-        return "Error"
 
 
-def User_ResetPass(id,email , password):
-    try:
-        user = db.session.query(Users).filter_by(id_user = id).first() 
-        if user:
-            user.Email = email 
-            user.Password = password
-            db.session.commit()
-            return "True"
-        else: return "False"
-        
-
-    except Exception as e:
-        print(str(e))
-        return "False"
-    
-def department_getall():
-    try:
-        department = Department.query.all()
-        
-        return jsonify(json_list =[i.serialize() for i in department])
-    except Exception as e:
-            print(str(e))
-            return "Error Controller Department"
-    
-def detaildepartment_getbyid_department(id_department):
-    try:
-        detaildepartment = DetailDepartment.query.filter_by(id_department = id_department).all()
-        users = Users.query.all()
-        listuser = []
-        for i in detaildepartment:
-            for j in users :
-                if i.id_user == j.id_user:
-                    listuser.append(j.serialize())
-        return jsonify(listuser)
-    except Exception as e:
-            print(str(e))
-            return "Error controller detaildepartment"
-    
 
 def saveFace(savepath, id_se , id_myuser):
     try:
@@ -88,5 +40,21 @@ def getimagebyface(id_face):
         else:
             return "null"
 
+    except Exception as e:
+        print(e)
+
+
+def getallSessionbyPageandiddepartment(id_department , page):
+    try:
+        users = Users.filter_by(id_department = id_department)
+        if users :
+            now = datetime.datetime.now()
+            five_days_ago = now - datetime.timedelta(days=page*5)
+            formatted_timed = five_days_ago.strftime("%Y-%m-%d")
+            formatted_time = now.strftime("%Y-%m-%d")
+            Sessions = sessions.query.filter(sessions.created_at <= formatted_time, sessions.created_at >= formatted_timed).all()
+            
+        else :
+            return 'null'
     except Exception as e:
         print(e)

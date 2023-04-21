@@ -121,6 +121,15 @@ class face_regconie():
                     formatted_time = now.strftime("%Y-%m-%d")
                     for i in pep:
                         nameimage += i
-                    print(nameimage)
-                    cv2.imwrite(savepath.split('.jpg')[0]+'_{}_{}.jpg'.format(nameimage,formatted_time), img1)
-                    return pep ,savepath            
+                    savepath = savepath.split('.jpg')[0]+'{}_{}.jpg'.format(nameimage,formatted_time)
+                    check = True
+                    folderpath = 'output_img'
+                    for i in os.listdir(folderpath):
+                        if (folderpath +'/'+ i) == savepath :
+                            check = False
+                            break
+                    if check :
+                        cv2.imwrite(savepath, img1)
+                        return pep ,savepath
+                    else: 
+                        return {} , ''   
