@@ -13,15 +13,21 @@ def getallSessionbyPageandiddepartment():
         # users = Users.query.filter_by(id_department=id_department).all()
         if page :
             now = datetime.now()
-            five_days_ago = now - timedelta(days=5)
-            fivedayago = five_days_ago.strftime("%Y-%m-%d")
-            daynow = now.strftime("%Y-%m-%d")
+            days = 5*int(page)
+            days_ago = now - timedelta(days)
+            fivedayago = days_ago.strftime("%Y-%m-%d")
+            if page != 1 :
+                day2 =5*(int(page)-1)
+                day_now = now - timedelta(day2)
+                daynow = day_now.strftime("%Y-%m-%d")
+            else :
+                daynow = now.strftime("%Y-%m-%d")
             work_schedules = work_schedule.query.filter(work_schedule.work_date <= daynow, work_schedule.work_date  >= fivedayago).filter_by(id_department = id_department).all()
             serialized_list_work_schedule = []
             for i in work_schedules:
                 listsession = sessions.query.filter_by(id_work_schedule = i.id_work_schedule).all()
                 serialized_list_employstatus = []
-                users = Users.query.all()
+                users = Users.query.filter_by(id_department=id_department).all()
                 for k in users:
                     # user = Users.query.filter_by(id_user = j.id_user).first()
                     found = False
@@ -37,8 +43,7 @@ def getallSessionbyPageandiddepartment():
                 
                 serialized_employstatus = serialize_work_schedule(i.work_date ,serialized_list_employstatus )
                 serialized_list_work_schedule.append(serialized_employstatus)
-            data = {"listwork_schedules": serialized_list_work_schedule}
-            return jsonify(data)
+            return jsonify(serialized_list_work_schedule)
         else :
             return 'null'
     # except Exception as e:
