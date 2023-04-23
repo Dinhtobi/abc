@@ -7,10 +7,11 @@ import train_main
 from flask_migrate import Migrate
 from flask import Blueprint
 from webmodel.models import db
-from webcontroller.user_controller import user_controller
+from webcontroller.user_controller import user_controller ,mail
 from webcontroller.department_controller import department_controller
 from webcontroller.session_controller import session_controller
 from webcontroller.work_schedule_controller import work_schedule_controller
+
 #Khởi tạo Flask Server Backend
 app = Flask(__name__)
 app.config.from_object('config')
@@ -18,11 +19,10 @@ app.config.from_object('config')
 CORS(app)
 app.config['CORS_HEADERS']  ='Content-Type'
 app.config['UPLOAD_FOLDER'] = "static"
+mail.init_app(app)
 db.init_app(app)
 
 migrate = Migrate(app, db)
-#model = myYolov7.my_yolov7('last.pt','cpu',0.6)
-#route_bp = Blueprint('route_bp', __name__)
 app.register_blueprint(user_controller)
 app.register_blueprint(department_controller)
 app.register_blueprint(session_controller)
