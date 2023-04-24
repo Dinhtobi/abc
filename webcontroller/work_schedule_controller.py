@@ -7,10 +7,9 @@ work_schedule_controller = Blueprint('work_schedule_controller', __name__, url_p
 
 @work_schedule_controller.route('/getby', methods=['POST'])
 def getallSessionbyPageandiddepartment():
-    # try:
+    try:
         id_department = request.form['id_department']
         page = request.form['page']
-        # users = Users.query.filter_by(id_department=id_department).all()
         if page :
             now = datetime.now()
             days = 5*int(page)
@@ -29,7 +28,6 @@ def getallSessionbyPageandiddepartment():
                 serialized_list_employstatus = []
                 users = Users.query.filter_by(id_department=id_department).all()
                 for k in users:
-                    # user = Users.query.filter_by(id_user = j.id_user).first()
                     found = False
                     for j in listsession:
                         if k.id_user == j.id_user:
@@ -46,6 +44,22 @@ def getallSessionbyPageandiddepartment():
             return jsonify(serialized_list_work_schedule)
         else :
             return 'null'
+    except Exception as e:
+        print(e)
+
+@work_schedule_controller.route('/', methods=['GET'])
+def getWork_schedules():
+    # try:
+        id_employee = request.json['id_employee']
+        start_day = request.json['start_day'].encode('utf8')
+        end_day = request.json['end_day'].encode('utf8')
+        user = Users.query.filter_by(id_user = id_employee).first()
+        work_schedules = Work_schedule.query.filter(Work_schedule.work_date <= end_day, Work_schedule.work_date  >= start_day).filter_by(id_department = user.id_department).order_by(Work_schedule.work_date.desc()).all()
+        listwork_schedule = []
+        for i in work_schedules:
+            print(i.id_work_schedule)
+            listwork_schedule.append(serialize_work_schedule_one_employee(i))
+        return jsonify(listwork_schedule)
     # except Exception as e:
     #     print(e)
 
@@ -70,3 +84,10 @@ def serialize_employstatus( session ,user):
         'status' : status,
         'time': time,
     }   
+def serialize_work_schedule_one_employee(work_schedule):
+    return{
+        'id' : work_schedule.id_work_schedule ,
+        'work_date' : work_schedule.work_date ,
+        'start_time': work_schedule.start_time.isoformat(),
+        'end_time': work_schedule.end_time.isoformat(),
+    }
