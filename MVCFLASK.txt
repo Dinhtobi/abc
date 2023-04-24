@@ -3,3 +3,5 @@ flask_sqlalchemy
 flask
 flask-cors
 mysqlclient
+flask_mail
+bcrypt
