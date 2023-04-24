@@ -11,6 +11,7 @@ from webcontroller.user_controller import user_controller
 from webcontroller.department_controller import department_controller
 from webcontroller.session_controller import session_controller
 from webcontroller.work_schedule_controller import work_schedule_controller
+from webcontroller.save_image_controller import save_img
 #Khởi tạo Flask Server Backend
 app = Flask(__name__)
 app.config.from_object('config')
@@ -20,6 +21,10 @@ app.config['CORS_HEADERS']  ='Content-Type'
 app.config['UPLOAD_FOLDER'] = "static"
 db.init_app(app)
 
+with app.app_context():
+    db.create_all()
+
+
 migrate = Migrate(app, db)
 #model = myYolov7.my_yolov7('last.pt','cpu',0.6)
 #route_bp = Blueprint('route_bp', __name__)
@@ -27,14 +32,15 @@ app.register_blueprint(user_controller)
 app.register_blueprint(department_controller)
 app.register_blueprint(session_controller)
 app.register_blueprint(work_schedule_controller)
+app.register_blueprint(save_img)
 
 
 
 @app.route('/' , methods= ['POST' , 'GET'])
 @cross_origin(origins='*')
-
 def trangchu():
     return render_template('index.html')
+
 
 
 @app.route('/train' , methods= ['POST'])

@@ -14,7 +14,8 @@ class Users(db.Model):
     Password = db.Column(db.String(100))
     address=db.Column(db.String(100))
     date_of_birth=db.Column(db.Date)
-    img_avatar=db.Column(db.String(200))
+    img_avatar=db.Column(db.Text)
+    token = db.Column(db.String(20))
     Roll = db.Column(db.Integer)
     id_department = db.Column(db.Integer,db.ForeignKey('departments.id_department'),nullable=False)
     sesstion_user = db.relationship('sessions', backref = 'sessions_user' , lazy = True)
@@ -24,9 +25,9 @@ class Users(db.Model):
     def serialize(self):
         return {
             "id_user": self.id_user,
-            "name": self.name,
-            "email": self.email,
-            "role": self.role,
+            "name": self.Name,
+            "email": self.Email,
+            "role": self.Roll,
             "address": self.address,
             "date_of_birth": self.date_of_birth,
             "img_avatar": self.img_avatar,
@@ -39,11 +40,11 @@ class Department(db.Model):
     Name = db.Column(db.String(100))
     Decription = db.Column(db.String(100))
     users = db.relationship('Users', backref='department', lazy=True)
-
     def get_id(self):
         return self.id_department
 
     def serialize(self):
+
         return {
             "id_department": self.id_department,
             "name": self.Name,
