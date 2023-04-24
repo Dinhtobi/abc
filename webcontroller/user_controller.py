@@ -79,14 +79,14 @@ def user_login():
     email = request.form['email']
     password = request.form['password']
     try:
-        user = Users.query.filter_by(Email = email).first()
-        if bcrypt.checkpw(password, user.Password):
+        user = Users.query.filter_by(email = email).first()
+        if bcrypt.checkpw(password, user.password):
 
             if user:
                 return jsonify(user.serialize())
             else: return  "null"
         else: 
-            return jsonify({'message': 'Wrong Password'}), 400
+            return jsonify({'message': 'Wrong password'}), 400
     except Exception as e:
         print(str(e))
         return "Error"
@@ -100,28 +100,28 @@ def user_rspassword():
         oldpassword = request.json['oldpassword']
         token = request.json['token']
         if token != 'null' and oldpassword == 'null':
-            user = Users.query.filter_by(Email = email).first()
-            if email != user.Email:
+            user = Users.query.filter_by(email = email).first()
+            if email != user.email:
                 return jsonify({'message': 'User not found'}), 404
         
             if token != user.token:
                 return jsonify({'message': 'Invalid token'}), 400
             if user:
                 token = generate_token(16)
-                user.Email = email 
-                user.Password = newpassword
+                user.email = email 
+                user.password = newpassword
                 user.token = token
                 db.session.commit()
                 return "True"
             else: return "False"
         else :
-            user = Users.query.filter_by(Email = email).filter_by(Password = oldpassword).first()
-            if email != user.Email:
+            user = Users.query.filter_by(email = email).filter_by(password = oldpassword).first()
+            if email != user.email:
                 return jsonify({'message': 'User not found'}), 404
             if user:
                 token = generate_token(16)
-                user.Email = email 
-                user.Password = newpassword
+                user.email = email 
+                user.password = newpassword
                 user.token = token
                 db.session.commit()
                 return "True"
@@ -137,7 +137,7 @@ def generate_token(length):
 
 
 def send_reset_email(email, token):
-    msg = Message('Password Reset', sender = 'dinhnguyen2002asd@gmail.com', recipients = [email])
+    msg = Message('password Reset', sender = 'dinhnguyen2002asd@gmail.com', recipients = [email])
     msg.body = f'Please click on this link to reset your password: token={token}'
     mail.send(msg)
 
@@ -145,20 +145,16 @@ def send_reset_email(email, token):
 @user_controller.route('/reset_password', methods=['POST'])
 def reset_password():
     email = request.json['email']
-    user = Users.query.filter_by(Email = email).first()
-    if email != user.Email:
+    user = Users.query.filter_by(email = email).first()
+    if email != user.email:
         return jsonify({'message': 'User not found'}), 404
     
     # Generate a unique token
     token = generate_token(6)
-    
-    # Store the token in the database
-    #users[email]['token'] = token
-    
     if user:
         user.token = token
         db.session.commit()
     # Send a password reset email
     send_reset_email(email, token)
     
-    return jsonify({'message': 'Password reset email sent'}), 200
+    return jsonify({'message': 'password reset email sent'}), 200

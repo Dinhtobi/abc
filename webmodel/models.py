@@ -9,14 +9,14 @@ db = SQLAlchemy()
 class Users(db.Model):
     __tablename__ = 'users'
     id_user = db.Column(db.Integer, primary_key = True)
-    Name = db.Column(db.String(100))
-    Email = db.Column(db.String(100))
-    Password = db.Column(db.String(100))
+    name = db.Column(db.String(100))
+    email = db.Column(db.String(100))
+    password = db.Column(db.String(100))
     address=db.Column(db.String(100))
     date_of_birth=db.Column(db.Date)
     img_avatar=db.Column(db.String(200))
     token = db.Column(db.String(20))
-    Roll = db.Column(db.Integer)
+    rolename = db.Column(db.String(20))
     id_department = db.Column(db.Integer,db.ForeignKey('departments.id_department'),nullable=False)
     sesstion_user = db.relationship('sessions', backref = 'sessions_user' , lazy = True)
     work_schedule_user = db.relationship('work_schedule', backref = 'work_schedule_user' , lazy = True)
@@ -25,9 +25,9 @@ class Users(db.Model):
     def serialize(self):
         return {
             "id_user": self.id_user,
-            "name": self.Name,
-            "email": self.Email,
-            "role": self.Roll,
+            "name": self.name,
+            "email": self.email,
+            "rolename": self.rolename,
             "address": self.address,
             "date_of_birth": self.date_of_birth,
             "img_avatar": self.img_avatar,
@@ -37,8 +37,8 @@ class Users(db.Model):
 class Department(db.Model):
     __tablename__ = 'departments'
     id_department = db.Column(db.Integer, primary_key = True)
-    Name = db.Column(db.String(100))
-    Decription = db.Column(db.String(100))
+    name = db.Column(db.String(100))
+    decription = db.Column(db.String(100))
     users = db.relationship('Users', backref='department', lazy=True)
     def get_id(self):
         return self.id_department
@@ -47,14 +47,14 @@ class Department(db.Model):
 
         return {
             "id_department": self.id_department,
-            "name": self.Name,
-            "decription": self.Decription,
+            "name": self.name,
+            "decription": self.decription,
             "num_users": len(self.users)
         }
 
 
 
-class sessions(db.Model):
+class Sessions(db.Model):
     __tablename__ = 'sessions'
     session_id = db.Column(db.Integer , primary_key = True)
     id_user = db.Column(db.Integer, db.ForeignKey('users.id_user'), nullable = False)
@@ -63,7 +63,7 @@ class sessions(db.Model):
     token = db.Column(db.String(200)) 
     created_at = db.Column(db.DateTime, server_default=func.now())
 
-class work_schedule(db.Model):
+class Work_schedule(db.Model):
     __tablename__ ='work_schedule'
     id_work_schedule = db.Column(db.Integer , primary_key = True)
     work_name = db.Column(db.String(100))

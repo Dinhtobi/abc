@@ -22,10 +22,10 @@ def getallSessionbyPageandiddepartment():
                 daynow = day_now.strftime("%Y-%m-%d")
             else :
                 daynow = now.strftime("%Y-%m-%d")
-            work_schedules = work_schedule.query.filter(work_schedule.work_date <= daynow, work_schedule.work_date  >= fivedayago).filter_by(id_department = id_department).all()
+            work_schedules = Work_schedule.query.filter(Work_schedule.work_date <= daynow, Work_schedule.work_date  >= fivedayago).filter_by(id_department = id_department).all()
             serialized_list_work_schedule = []
             for i in work_schedules:
-                listsession = sessions.query.filter_by(id_work_schedule = i.id_work_schedule).all()
+                listsession = Sessions.query.filter_by(id_work_schedule = i.id_work_schedule).all()
                 serialized_list_employstatus = []
                 users = Users.query.filter_by(id_department=id_department).all()
                 for k in users:
@@ -52,7 +52,7 @@ def getallSessionbyPageandiddepartment():
 def serialize_work_schedule(date , listsession ):
     return{
         'Date': date,
-        'list<work_schedule>' : listsession
+        'listwork_schedule' : listsession
     }   
 def serialize_employstatus( session ,user):
     if session != None:
@@ -65,8 +65,8 @@ def serialize_employstatus( session ,user):
     return{
         'id' : user.id_user,
         'img_avatar' : user.img_avatar,
-        'roll_name' : user.Roll,
-        'name' : user.Name,
+        'roll_name' : user.rolename,
+        'name' : user.name,
         'status' : status,
         'time': time,
     }   
