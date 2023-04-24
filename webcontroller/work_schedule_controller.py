@@ -22,7 +22,7 @@ def getallSessionbyPageandiddepartment():
                 daynow = day_now.strftime("%Y-%m-%d")
             else :
                 daynow = now.strftime("%Y-%m-%d")
-            work_schedules = Work_schedule.query.filter(Work_schedule.work_date <= daynow, Work_schedule.work_date  >= fivedayago).filter_by(id_department = id_department).all()
+            work_schedules = Work_schedule.query.filter(Work_schedule.work_date <= daynow, Work_schedule.work_date  >= fivedayago).filter_by(id_department = id_department).order_by(Work_schedule.work_date.desc()).all()
             serialized_list_work_schedule = []
             for i in work_schedules:
                 listsession = Sessions.query.filter_by(id_work_schedule = i.id_work_schedule).all()
