@@ -75,14 +75,14 @@ def getEmployee():
         for i in work_schedules:
             session = Sessions.query.filter_by(id_work_schedule = i.id_work_schedule).filter_by(id_user = user.id_user).first()
             if session:
-                listsessionemployee.append(serialize_employstatus(session,user))
+                listsessionemployee.append(serialize_employstatus(session,user , i))
             else :
-                listsessionemployee.append(serialize_employstatus(None,user))
+                listsessionemployee.append(serialize_employstatus(None,user , i))
         return jsonify(listsessionemployee)
         
     except Exception as e:
         print(e)
-def serialize_employstatus( session ,user):
+def serialize_employstatus( session ,user , work_schedule):
     if session != None:
         if session.session_id :
             status = 1
@@ -91,6 +91,7 @@ def serialize_employstatus( session ,user):
         status = 0 
         time = ''
     return{
+        'date': work_schedule.work_date,
         'id' : user.id_user,
         'img_avatar' : user.img_avatar,
         'roll_name' : user.rolename,
