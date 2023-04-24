@@ -24,11 +24,12 @@ def get_user(user_id):
 
 @user_controller.route('/create', methods=['POST'])
 def create_user():
-    if not request.json or not 'name' in request.json or not 'email' in request.json or not 'password' in request.json or not 'role' in request.json:
+    if not request.json or not 'name' in request.json or not 'email' in request.json or not 'password' in request.json or not 'rolename' in request.json:
         abort(400)
     salt = bcrypt.gensalt()
-    hashed_password = bcrypt.hashpw(request.json['password'], salt)
-    user = Users(name=request.json['name'], email=request.json['email'], password=hashed_password, role=request.json['role'])
+    bytes = request.json['password'].encode('utf-8')
+    hashed_password = bcrypt.hashpw(bytes, salt)
+    user = Users(name=request.json['name'], email=request.json['email'], password=hashed_password, rolename=request.json['rolename'])
     if 'address' in request.json:
         user.address = request.json['address']
     if 'date_of_birth' in request.json:
@@ -79,14 +80,14 @@ def user_login():
     email = request.form['email']
     password = request.form['password']
     try:
-        user = Users.query.filter_by(email = email).filter_by(password = password).first()
-       # if bcrypt.checkpw(password, user.password):
+        user = Users.query.filter_by(email = email).first()
+        if bcrypt.checkpw(password.encode('utf8'), user.password.encode('utf8')):
 
-        if user:
-            return jsonify(user.serialize())
-        else: return  "null"
-        # else: 
-        #     return jsonify({'message': 'Wrong password'}), 400
+            if user:
+                return jsonify(user.serialize())
+            else: return  "null"
+        else: 
+            return jsonify({'message': 'Wrong password'}), 400
     except Exception as e:
         print(str(e))
         return "Error"
