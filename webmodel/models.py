@@ -14,7 +14,7 @@ class Users(db.Model):
     password = db.Column(db.String(100))
     address=db.Column(db.String(100))
     date_of_birth=db.Column(db.Date)
-    img_avatar=db.Column(db.String(200))
+    img_avatar=db.Column(db.Text)
     token = db.Column(db.String(20))
     rolename = db.Column(db.String(20))
     id_department = db.Column(db.Integer,db.ForeignKey('departments.id_department'),nullable=False)

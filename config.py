@@ -11,6 +11,7 @@ SQLALCHEMY_DATABASE_URI = 'mysql://root:''@localhost/pbl5_ndkm'
 
 # Turn off the Flask-SQLAlchemy event system and warning
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+
 MAIL_SERVER='smtp.gmail.com'
 MAIL_PORT = 465
 MAIL_USERNAME = 'dinhnguyen2002asd@gmail.com'
