@@ -79,14 +79,14 @@ def user_login():
     email = request.form['email']
     password = request.form['password']
     try:
-        user = Users.query.filter_by(email = email).first()
-        if bcrypt.checkpw(password, user.password):
+        user = Users.query.filter_by(email = email).filter_by(password = password).first()
+       # if bcrypt.checkpw(password, user.password):
 
-            if user:
-                return jsonify(user.serialize())
-            else: return  "null"
-        else: 
-            return jsonify({'message': 'Wrong password'}), 400
+        if user:
+            return jsonify(user.serialize())
+        else: return  "null"
+        # else: 
+        #     return jsonify({'message': 'Wrong password'}), 400
     except Exception as e:
         print(str(e))
         return "Error"

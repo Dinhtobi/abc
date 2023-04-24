@@ -18,8 +18,8 @@ class Users(db.Model):
     token = db.Column(db.String(20))
     rolename = db.Column(db.String(20))
     id_department = db.Column(db.Integer,db.ForeignKey('departments.id_department'),nullable=False)
-    sesstion_user = db.relationship('sessions', backref = 'sessions_user' , lazy = True)
-    work_schedule_user = db.relationship('work_schedule', backref = 'work_schedule_user' , lazy = True)
+    sesstion_user = db.relationship('Sessions', backref = 'sessions_user' , lazy = True)
+    work_schedule_user = db.relationship('Work_schedule', backref = 'work_schedule_user' , lazy = True)
     def get_id(self):
         return(self.id_user)
     def serialize(self):
@@ -72,7 +72,7 @@ class Work_schedule(db.Model):
     end_time = db.Column(db.Time)
     created_by = db.Column(db.Integer, db.ForeignKey('users.id_user'), nullable = False)
     id_department = db.Column(db.Integer , db.ForeignKey('departments.id_department') , nullable = False)
-    work_schedule_sesstions = db.relationship('sessions', backref = 'work_schedule_session' , lazy = True)
+    work_schedule_sesstions = db.relationship('Sessions', backref = 'work_schedule_session' , lazy = True)
     def serialize(self):
         return{
             'id_work_schedule': self.id_work_schedule,
