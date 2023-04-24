@@ -46,8 +46,8 @@ def getallSessionbyPageandiddepartment():
 
 def serialize_work_schedule(date , listsession ):
     return{
-        'Date': date,
-        'list<work_schedule>' : listsession
+        'date': date,
+        'employeeStatuses' : listsession
     }   
 def serialize_employstatus( session ,user):
     if session != None:

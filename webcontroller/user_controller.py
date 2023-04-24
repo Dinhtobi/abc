@@ -4,6 +4,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, jsonif
 from webmodel.models import Users,db
 import datetime
 
+
 user_controller = Blueprint('user_controller', __name__, url_prefix='/api/users')
 
 @user_controller.route('/', methods=['GET'])
