@@ -51,14 +51,15 @@ def saveSession(Namepeople,savepath):
         now = datetime.now()
         current_time = now.strftime("%H:%M:%S")
         current_date = date.today()
-        getwork_schedule = work_schedule.query.filter(work_schedule.start_time <= current_time, work_schedule.end_time >= current_time).filter(work_schedule.work_date == current_date).first()
+        getwork_schedule = Work_schedule.query.filter(Work_schedule.start_time <= current_time, Work_schedule.end_time >= current_time).filter(Work_schedule.work_date == current_date).all()
         for i in users:
             for j in Namepeople:
-                if i.Name == j:
-                    path = "http://0.0.0.0:6868/" + savepath
-                    newsesstion = sessions( id_user = i.id_user ,id_work_schedule = getwork_schedule.id_work_schedule,image_url = path , token ="Add")
-                    db.session.add(newsesstion)
-                    db.session.commit()
+                for k in getwork_schedule:
+                    if i.Name == j and i.id_department == k.id_department:
+                        path = "http://0.0.0.0:6868/" + savepath
+                        newsesstion = Sessions( id_user = i.id_user ,id_work_schedule = k.id_work_schedule,image_url = path , token ="Add")
+                        db.session.add(newsesstion)
+                        db.session.commit()
         return "Thành công"
     except Exception as e:
         print(e)
