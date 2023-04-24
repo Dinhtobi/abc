@@ -55,7 +55,7 @@ def saveSession(Namepeople,savepath):
         for i in users:
             for j in Namepeople:
                 for k in getwork_schedule:
-                    if i.Name == j and i.id_department == k.id_department:
+                    if i.name == j and i.id_department == k.id_department:
                         path = "http://0.0.0.0:6868/" + savepath
                         newsesstion = Sessions( id_user = i.id_user ,id_work_schedule = k.id_work_schedule,image_url = path , token ="Add")
                         db.session.add(newsesstion)
