@@ -63,5 +63,39 @@ def saveSession(Namepeople,savepath):
         return "Thành công"
     except Exception as e:
         print(e)
-
-
+@session_controller.route('/' , methods= ['GET'])
+def getEmployee():
+    try:
+        id_employee = request.json['id_employee']
+        start_day = request.json['start_day'].encode('utf8')
+        end_day = request.json['end_day'].encode('utf8')
+        user = Users.query.filter_by(id_user = id_employee).first()
+        work_schedules = Work_schedule.query.filter(Work_schedule.work_date <= end_day, Work_schedule.work_date  >= start_day).filter_by(id_department = user.id_department).order_by(Work_schedule.work_date.desc()).all()
+        listsessionemployee =[]
+        for i in work_schedules:
+            session = Sessions.query.filter_by(id_work_schedule = i.id_work_schedule).filter_by(id_user = user.id_user).first()
+            if session:
+                listsessionemployee.append(serialize_employstatus(session,user , i))
+            else :
+                listsessionemployee.append(serialize_employstatus(None,user , i))
+        return jsonify(listsessionemployee)
+        
+    except Exception as e:
+        print(e)
+def serialize_employstatus( session ,user , work_schedule):
+    if session != None:
+        if session.session_id :
+            status = 1
+            time = session.created_at
+    else :
+        status = 0 
+        time = ''
+    return{
+        'date': work_schedule.work_date,
+        'id' : user.id_user,
+        'img_avatar' : user.img_avatar,
+        'roll_name' : user.rolename,
+        'name' : user.name,
+        'status' : status,
+        'time': time,
+    }  
