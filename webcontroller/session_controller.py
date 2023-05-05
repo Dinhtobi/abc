@@ -31,11 +31,11 @@ def predict_image():
             folderpath = 'output_img'
             savepath =  folderpath +'/image.jpg'
             result,img1,bounding_box =  model.detect(imgs,savepath,count)
-            Namepeople ,path = models.regconie(path_file,bounding_box, img1)
-            if Namepeople :
+            idpeople ,path = models.regconie(path_file,bounding_box, img1)
+            if idpeople :
                 os.remove(path_file)
                 
-                saveSession(Namepeople,path)
+                saveSession(idpeople,path)
                 return "True"
                            
             else :
@@ -45,7 +45,7 @@ def predict_image():
         print(e)
         return e 
     
-def saveSession(Namepeople,savepath):
+def saveSession(idpeople,savepath):
     try:
         users = Users.query.all()
         now = datetime.now()
@@ -53,9 +53,9 @@ def saveSession(Namepeople,savepath):
         current_date = date.today()
         getwork_schedule = Work_schedule.query.filter(Work_schedule.start_time <= current_time, Work_schedule.end_time >= current_time).filter(Work_schedule.work_date == current_date).all()
         for i in users:
-            for j in Namepeople:
+            for j in idpeople:
                 for k in getwork_schedule:
-                    if i.name == j and i.id_department == k.id_department:
+                    if i.id_user == j and i.id_department == k.id_department:
                         path = "http://0.0.0.0:6868/" + savepath
                         newsesstion = Sessions( id_user = i.id_user ,id_work_schedule = k.id_work_schedule,image_url = path , token ="Add")
                         db.session.add(newsesstion)

@@ -4,7 +4,7 @@ import cv2
 import matplotlib.pyplot as plt
 model = myYolov7.my_yolov7('last.pt','cpu',0.6)
 
-def predict_YOLOv7_proces(folderTrain='train_img' , folderOutput='output_img'):
+def predict_YOLOv7_proces(folderTrain='train_img' , folderOutput='crop_img'):
     
     for pathfolder in os.listdir(folderTrain):
         try:
@@ -17,7 +17,7 @@ def predict_YOLOv7_proces(folderTrain='train_img' , folderOutput='output_img'):
                 count +=1
                 imgs =  folderTrain+'/' + pathfolder +'/' + pathfile  
                 print(imgs, savepath , count)
-                model.detect(imgs,savepath,count)
+                model.detect(imgs,savepath,count,"save")
         except:
             print("Thư mục bạn dùng để cắt ảnh đã tồn tại và còn ảnh bên trong!")        
 

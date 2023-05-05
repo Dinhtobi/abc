@@ -50,7 +50,8 @@ class my_yolov7():
                         label = f'{names[int(cls)]} {conf:.2f}'
                         crop_img = im0[int(xyxy[1]):int(xyxy[3]), int(xyxy[0]):int(xyxy[2])]
                         if type == "save":
-                            cv2.imwrite(savepath.split('.jpg')[0]+'_{}_{}.jpg'.format(count,index), crop_img)
+                            resuzeed_img = cv2.resize(crop_img , (182,182))
+                            cv2.imwrite(savepath.split('.jpg')[0]+'_{}_{}.jpg'.format(count,index), resuzeed_img)
             
                         plot_one_box(xyxy, im0, label=label, color=colors[int(cls)], line_thickness=1)
                     im0 = np.asarray(im0)

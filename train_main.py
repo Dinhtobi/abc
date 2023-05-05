@@ -6,7 +6,7 @@ from classifier import training
 
 def Train():
     
-    datadir = './aligned_img'
+    datadir = './crop_img'
     modeldir = './model/20180402-114759.pb'
     #modeldir = './model/20170511-185253.pb'
     classifier_filename = './class/classifier.pkl'
@@ -15,5 +15,4 @@ def Train():
     get_file=obj.main_train()
     print('Saved classifier model to file "%s"' % get_file)
     sys.exit("All Done")
-
 
