@@ -41,7 +41,8 @@ def getallSessionbyPageandiddepartment():
                 
                 serialized_employstatus = serialize_work_schedule(i.work_date ,serialized_list_employstatus )
                 serialized_list_work_schedule.append(serialized_employstatus)
-            return jsonify(serialized_list_work_schedule)
+            data = {"listwork_schedules": serialized_list_work_schedule}
+            return jsonify(list(serialized_list_work_schedule))
         else :
             return 'null'
     except Exception as e:
@@ -65,8 +66,8 @@ def getWork_schedules():
 
 def serialize_work_schedule(date , listsession ):
     return{
-        'Date': date,
-        'listwork_schedule' : listsession
+        'date': date,
+        'employeeStatuses' : listsession
     }   
 def serialize_employstatus( session ,user):
     if session != None:
