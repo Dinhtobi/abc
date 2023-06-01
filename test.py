@@ -42,7 +42,7 @@ class face_regconie():
                     (self.model, self.class_names) = pickle.load(infile,encoding='latin1')
                 
                 video_capture = cv2.VideoCapture(self.video)
-    def regconie(self,path_img , boundingbox , img1):
+    def regconie(self,path_img , boundingbox , img1 ,users):
             
         
                 print('Start Recognition')
@@ -67,7 +67,8 @@ class face_regconie():
                     cropped = []
                     scaled = []
                     scaled_reshape = []
-                    pep = []
+                    names = []
+                    ids= []
                     for i in range(faceNum):
                         emb_array = np.zeros((1, self.embedding_size))
                         xmin = int(det[i][0])
@@ -97,11 +98,15 @@ class face_regconie():
                                 for H_i in self.HumanNames:
                                     if self.HumanNames[best_class_indices[0]] == H_i:
                                         result_names = self.HumanNames[best_class_indices[0]]
-                                        
-                                        plot_one_box([xmin, ymin, xmax, ymax], img1, label= self.HumanNames[best_class_indices[0]], color=colors[int(2)], line_thickness=1)
-                                        img1 = np.asarray(img1)
-                                        pep.append(self.HumanNames[best_class_indices[0]])
-                                        print("Predictions : [ name: {} , accuracy: {:.3f} ]".format(self.HumanNames[best_class_indices[0]],best_class_probabilities[0]))
+                                        for i in users:
+                                            if self.HumanNames[best_class_indices[0]] == str(i.id_user):
+                                                plot_one_box([xmin, ymin, xmax, ymax], img1, label= self.HumanNames[best_class_indices[0]], color=colors[int(2)], line_thickness=1)
+                                                img1 = np.asarray(img1)
+                                                names.append(i.name)
+                                                ids.append(self.HumanNames[best_class_indices[0]])
+                                                name = i.name
+                                                break
+                                        print("Predictions : [ name: {} , accuracy: {:.3f} ]".format(name,best_class_probabilities[0]))
                                         cv2.rectangle(frame, (xmin, ymin-20), (xmax, ymin-2), (0, 255,255), -1)
                                         cv2.putText(frame, result_names, (xmin,ymin-5), cv2.FONT_HERSHEY_COMPLEX_SMALL,
                                                     1, (0, 0, 0), thickness=1, lineType=1)
@@ -113,23 +118,23 @@ class face_regconie():
                                 cv2.putText(frame, "?", (xmin,ymin-5), cv2.FONT_HERSHEY_COMPLEX_SMALL,
                                                     1, (0, 0, 0), thickness=1, lineType=1)
                         except:   
-                            
                             print("error")
                     #cv2.imwrite(savepath, img1)
                     nameimage = ''
                     now = datetime.datetime.now()
                     formatted_time = now.strftime("%Y-%m-%d")
-                    for i in pep:
+                    for i in names:
                         nameimage += i
                     savepath = savepath.split('.jpg')[0]+'{}_{}.jpg'.format(nameimage,formatted_time)
                     check = True
                     folderpath = 'output_img'
+                  
                     for i in os.listdir(folderpath):
                         if (folderpath +'/'+ i) == savepath :
                             check = False
                             break
                     if check :
                         cv2.imwrite(savepath, img1)
-                        return pep ,savepath
+                        return ids ,savepath
                     else: 
                         return {} , ''   

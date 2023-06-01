@@ -30,8 +30,9 @@ def predict_image():
             count = len(listfile)
             folderpath = 'output_img'
             savepath =  folderpath +'/image.jpg'
+            users = Users.query.all()
             result,img1,bounding_box =  model.detect(imgs,savepath,count)
-            idpeople ,path = models.regconie(path_file,bounding_box, img1)
+            idpeople ,path = models.regconie(path_file,bounding_box, img1,users)
             if idpeople :
                 os.remove(path_file)
                 
@@ -55,7 +56,7 @@ def saveSession(idpeople,savepath):
         for i in users:
             for j in idpeople:
                 for k in getwork_schedule:
-                    if i.id_user == j and i.id_department == k.id_department:
+                    if str(i.id_user) == j and i.id_department == k.id_department:
                         path = "http://0.0.0.0:6868/" + savepath
                         newsesstion = Sessions( id_user = i.id_user ,id_work_schedule = k.id_work_schedule,image_url = path , token ="Add")
                         db.session.add(newsesstion)
