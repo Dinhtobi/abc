@@ -100,6 +100,9 @@ def user_rspassword():
         newpassword = request.json['newpassword']
         oldpassword = request.json['oldpassword']
         token = request.json['token']
+        salt = bcrypt.gensalt()
+        bytes = newpassword.encode('utf-8')
+        hashed_password = bcrypt.hashpw(bytes, salt)
         if token != 'null' and oldpassword == 'null':
             user = Users.query.filter_by(email = email).first()
             if email != user.email:
@@ -110,23 +113,25 @@ def user_rspassword():
             if user:
                 token = generate_token(16)
                 user.email = email 
-                user.password = newpassword
+                user.password = hashed_password
                 user.token = token
                 db.session.commit()
                 return "True"
             else: return "False"
         else :
-            user = Users.query.filter_by(email = email).filter_by(password = oldpassword).first()
+            user = Users.query.filter_by(email = email).first()
             if email != user.email:
                 return jsonify({'message': 'User not found'}), 404
-            if user:
-                token = generate_token(16)
-                user.email = email 
-                user.password = newpassword
-                user.token = token
-                db.session.commit()
-                return "True"
-            else: return "False"
+            if bcrypt.checkpw(oldpassword.encode('utf8'), user.password.encode('utf8')):
+
+                if user:
+                    token = generate_token(16)
+                    user.email = email 
+                    user.password = hashed_password
+                    user.token = token
+                    db.session.commit()
+                    return "True"
+                else: return "False"
     except Exception as e:
         print(str(e))
         return "False" 
