@@ -132,6 +132,7 @@ def user_rspassword():
                     db.session.commit()
                     return "True"
                 else: return "False"
+
     except Exception as e:
         print(str(e))
         return "False" 
