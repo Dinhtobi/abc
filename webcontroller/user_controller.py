@@ -123,6 +123,7 @@ def user_rspassword():
             if email != user.email:
                 return jsonify({'message': 'User not found'}), 404
             if bcrypt.checkpw(oldpassword.encode('utf8'), user.password.encode('utf8')):
+
                 if user:
                     token = generate_token(16)
                     user.email = email 
@@ -130,8 +131,8 @@ def user_rspassword():
                     user.token = token
                     db.session.commit()
                     return "True"
-                else: return "aba"
-        
+                else: return "False"
+
     except Exception as e:
         print(str(e))
         return "False" 

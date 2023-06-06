@@ -126,13 +126,19 @@ class face_regconie():
                     for i in names:
                         nameimage += i
                     savepath = savepath.split('.jpg')[0]+'{}_{}.jpg'.format(nameimage,formatted_time)
-                    check = True
+                    check = False
                     folderpath = 'output_img'
-                  
-                    for i in os.listdir(folderpath):
-                        if (folderpath +'/'+ i) == savepath :
-                            check = False
-                            break
+                    for i in users:
+                        for j in ids:
+                            print(i.id_user, j)
+                            if str(i.id_user )== j:
+                                check = True
+                                break
+                    # for i in os.listdir(folderpath):
+                    #     if (folderpath +'/'+ i) == savepath :
+                    #         check = False
+                    #         break
+                    print(check)
                     if check :
                         cv2.imwrite(savepath, img1)
                         return ids ,savepath

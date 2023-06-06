@@ -30,13 +30,29 @@ def predict_image():
             count = len(listfile)
             folderpath = 'output_img'
             savepath =  folderpath +'/image.jpg'
+
             users = Users.query.all()
+            now = datetime.now()
+            current_time = now.strftime("%H:%M:%S")
+            current_date = date.today()
+            users_recognition = []
+            user_session = Sessions.query.all()
+            getwork_schedule = Work_schedule.query.filter(Work_schedule.start_time <= current_time, Work_schedule.end_time >= current_time).filter(Work_schedule.work_date == current_date).all()
+            for i in users:
+                for k in getwork_schedule:
+                    if i.id_department == k.id_department:
+                        users_recognition.append(i)
+            for i in getwork_schedule:
+                for j in user_session:
+                    for k in users_recognition:
+                        if k.id_user == j.id_user and i.id_work_schedule == j.id_work_schedule:
+                            users_recognition.remove(k)
             result,img1,bounding_box =  model.detect(imgs,savepath,count)
-            idpeople ,path = models.regconie(path_file,bounding_box, img1,users)
+            idpeople ,path = models.regconie(path_file,bounding_box, img1,users_recognition)
+            os.remove(path_file)
+            print(idpeople)
             if idpeople :
-                os.remove(path_file)
-                
-                saveSession(idpeople,path)
+                saveSession(idpeople,getwork_schedule,path)
                 return "True"
                            
             else :
@@ -46,13 +62,9 @@ def predict_image():
         print(e)
         return e 
     
-def saveSession(idpeople,savepath):
+def saveSession(idpeople,getwork_schedule,savepath):
     try:
         users = Users.query.all()
-        now = datetime.now()
-        current_time = now.strftime("%H:%M:%S")
-        current_date = date.today()
-        getwork_schedule = Work_schedule.query.filter(Work_schedule.start_time <= current_time, Work_schedule.end_time >= current_time).filter(Work_schedule.work_date == current_date).all()
         for i in users:
             for j in idpeople:
                 for k in getwork_schedule:
