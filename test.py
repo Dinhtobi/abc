@@ -93,7 +93,7 @@ class face_regconie():
                             predictions = self.model.predict_proba(emb_array)
                             best_class_indices = np.argmax(predictions, axis=1)
                             best_class_probabilities = predictions[np.arange(len(best_class_indices)), best_class_indices]
-                            if best_class_probabilities>0.7:
+                            if best_class_probabilities>0.85:
                                 cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), (0, 255, 0), 2)    #boxing face
                                 for H_i in self.HumanNames:
                                     if self.HumanNames[best_class_indices[0]] == H_i:
@@ -120,27 +120,37 @@ class face_regconie():
                         except:   
                             print("error")
                     #cv2.imwrite(savepath, img1)
-                    nameimage = ''
-                    now = datetime.datetime.now()
-                    formatted_time = now.strftime("%Y-%m-%d")
-                    for i in names:
-                        nameimage += i
-                    savepath = savepath.split('.jpg')[0]+'{}_{}.jpg'.format(nameimage,formatted_time)
-                    check = False
-                    folderpath = 'output_img'
-                    for i in users:
-                        for j in ids:
-                            print(i.id_user, j)
-                            if str(i.id_user )== j:
-                                check = True
-                                break
-                    # for i in os.listdir(folderpath):
-                    #     if (folderpath +'/'+ i) == savepath :
-                    #         check = False
-                    #         break
-                    print(check)
-                    if check :
-                        cv2.imwrite(savepath, img1)
-                        return ids ,savepath
-                    else: 
-                        return {} , ''   
+                    try:
+
+                        now = datetime.datetime.now()
+                        formatted_time = now.strftime("%Y-%m-%d")
+                        Name_Recognition = ''
+                        for index, name in enumerate(names):
+                            if index == len(names) - 1:
+                                Name_Recognition += name
+                            else:
+                                Name_Recognition += name + ','
+
+                            
+
+                        savepath = savepath.split('.jpg')[0]+'{}_{}.jpg'.format(Name_Recognition,formatted_time)
+                        check = False
+                        folderpath = 'output_img'
+                        for i in users:
+                            for j in ids:
+                                if str(i.id_user )== j:
+                                    check = True
+                                    break
+                        # for i in os.listdir(folderpath):
+                        #     if (folderpath +'/'+ i) == savepath :
+                        #         check = False
+                        #         break
+                        if check :
+                            cv2.imwrite(savepath, img1)
+                            return ids ,Name_Recognition
+                        else: 
+                            return {} , ''  
+                    except Exception as e:
+                        print(e)
+                else :
+                    return {} ,''

@@ -53,7 +53,7 @@ def predict_image():
             print(idpeople)
             if idpeople :
                 saveSession(idpeople,getwork_schedule,path)
-                return "True"
+                return path
                            
             else :
                 return "False"
