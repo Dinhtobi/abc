@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import time
 model = myYolov7.my_yolov7('last.pt','cpu',0.6)
 
-def predict_YOLOv7_proces(folderTrain='download2' , folderOutput='KHDL_crop'):
+def predict_YOLOv7_proces(folderTrain='train_img' , folderOutput='crop_img'):
     
     for pathfolder in os.listdir(folderTrain):
         try:
