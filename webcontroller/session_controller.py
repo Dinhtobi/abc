@@ -76,7 +76,7 @@ def saveSession(idpeople,getwork_schedule,savepath):
         return "Thành công"
     except Exception as e:
         print(e)
-@session_controller.route('/' , methods= ['GET'])
+@session_controller.route('/' , methods= ['POST'])
 def getEmployee():
     try:
         id_employee = request.json['id_employee']
