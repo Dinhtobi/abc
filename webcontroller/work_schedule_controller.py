@@ -48,7 +48,7 @@ def getallSessionbyPageandiddepartment():
     except Exception as e:
         print(e)
 
-@work_schedule_controller.route('/', methods=['GET'])
+@work_schedule_controller.route('/', methods=['POST'])
 def getWork_schedules():
     # try:
         id_employee = request.json['id_employee']
