@@ -13,6 +13,7 @@ from PIL import Image
 from numpy import random
 import datetime
 import tensorflow.compat.v1 as tf
+from unidecode import unidecode
 from utils.plots import plot_one_box
 class face_regconie():
     def __init__(self):
@@ -93,14 +94,14 @@ class face_regconie():
                             predictions = self.model.predict_proba(emb_array)
                             best_class_indices = np.argmax(predictions, axis=1)
                             best_class_probabilities = predictions[np.arange(len(best_class_indices)), best_class_indices]
-                            if best_class_probabilities>0.85:
+                            if best_class_probabilities>0.8:
                                 cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), (0, 255, 0), 2)    #boxing face
                                 for H_i in self.HumanNames:
                                     if self.HumanNames[best_class_indices[0]] == H_i:
                                         result_names = self.HumanNames[best_class_indices[0]]
                                         for i in users:
                                             if self.HumanNames[best_class_indices[0]] == str(i.id_user):
-                                                plot_one_box([xmin, ymin, xmax, ymax], img1, label= self.HumanNames[best_class_indices[0]], color=colors[int(2)], line_thickness=1)
+                                                plot_one_box([xmin, ymin, xmax, ymax], img1, label= self.HumanNames[best_class_indices[0]], color=colors[int(2)], line_thickness=2)
                                                 img1 = np.asarray(img1)
                                                 names.append(i.name)
                                                 ids.append(self.HumanNames[best_class_indices[0]])
@@ -133,7 +134,7 @@ class face_regconie():
 
                             
 
-                        savepath = savepath.split('.jpg')[0]+'{}_{}.jpg'.format(Name_Recognition,formatted_time)
+                        savepath = savepath.split('.jpg')[0]+'{}_{}.jpg'.format(unidecode(Name_Recognition),formatted_time)
                         check = False
                         folderpath = 'output_img'
                         for i in users:
@@ -147,7 +148,7 @@ class face_regconie():
                         #         break
                         if check :
                             cv2.imwrite(savepath, img1)
-                            return ids ,Name_Recognition
+                            return ids , unidecode(Name_Recognition)
                         else: 
                             return {} , ''  
                     except Exception as e:

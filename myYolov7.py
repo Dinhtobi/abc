@@ -52,7 +52,10 @@ class my_yolov7():
                         if type == "save":
                             resuzeed_img = cv2.resize(crop_img , (182,182))
                             cv2.imwrite(savepath.split('.jpg')[0]+'_{}_{}.jpg'.format(count,index), resuzeed_img)
+                        print( int(xyxy[0]),int(xyxy[1]),int(xyxy[2]) ,int(xyxy[3]))
+                        plot_one_box(xyxy, im0, label=label, color=colors[int(cls)], line_thickness=2)
+                        # cv2.imwrite(savepath.split('.jpg')[0]+'_{}_{}.jpg'.format(count,index), im0)
             
-                        plot_one_box(xyxy, im0, label=label, color=colors[int(cls)], line_thickness=1)
                     im0 = np.asarray(im0)
+            
                 return im0,img1 ,det
